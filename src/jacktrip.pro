@@ -2,16 +2,20 @@
 # Created by Juan-Pablo Caceres
 #******************************
 
+CONFIG += c++11 console
+CONFIG -= app_bundle
+
 CONFIG += qt thread debug_and_release build_all
 CONFIG(debug, debug|release) {
   TARGET = jacktrip_debug
   } else {
   TARGET = jacktrip
   }
+
 QT -= gui
 QT += network
 # http://wiki.qtcentre.org/index.php?title=Undocumented_qmake#Custom_tools
-DEFINES += __RT_AUDIO__
+#cc DEFINES += __RT_AUDIO__
 # Configuration without Jack
 nojack {
   DEFINES += __NO_JACK__
@@ -38,7 +42,7 @@ macx {
   }
 
 linux-g++ | linux-g++-64 {
-  LIBS += -lasound -lrtaudio
+#   LIBS += -lasound -lrtaudio
   QMAKE_CXXFLAGS += -D__LINUX_ALSA__ #-D__LINUX_OSS__ #RtAudio Flags
   QMAKE_CXXFLAGS += -g -O2
   DEFINES += __LINUX__
@@ -54,14 +58,21 @@ linux-g++-64 {
   QMAKE_CXXFLAGS += -fPIC -D__LINUX_ALSA__ #-D__LINUX_OSS__ #RtAudio Flags
   }
 
+
 win32 {
   message(win32)
-  CONFIG += x86 console
-  QMAKE_CXXFLAGS += -D__WINDOWS_ASIO__ #-D__UNIX_JACK__ #RtAudio Flags
-  LIBS += -lWs2_32 -lOle32 #needed by rtaudio/asio
-  LIBS += "../externals/includes/QTWindows/libjack.lib"
+#cc  CONFIG += x86 console
+CONFIG += c++11 console
+INCLUDEPATH += C:\Users\cc\Downloads\jack2-master\jack2-master\common
+LIBS += -LC:\Users\cc\Documents\jackSimpleClient\lib -ljack
+#cc  QMAKE_CXXFLAGS += -D__WINDOWS_ASIO__ #-D__UNIX_JACK__ #RtAudio Flags
+  #QMAKE_LFLAGS += -static -static-libgcc -static-libstdc++ -lpthread
+  LIBS += -lWs2_32 #cc -lOle32 #needed by rtaudio/asio
+#cc  LIBS += "../externals/includes/QTWindows/libjack.lib"
   DEFINES += __WIN_32__
-  DEFINES -= UNICODE #RtAudio for Qt
+#cc    DEFINES -= UNICODE #RtAudio for Qt
+INCLUDEPATH += ../../Downloads/jack2-master/jack2-master/common
+LIBS += -LC:\Users\cc\Documents\jackSimpleClient\lib -ljack
 }
 
 
@@ -92,8 +103,7 @@ HEADERS += DataProtocol.h \
            ThreadPoolTest.h \
            UdpDataProtocol.h \
            UdpMasterListener.h \
-           AudioInterface.h \
-           RtAudioInterface.h
+           AudioInterface.h
            #JamTest.h
 !nojack {
 SOURCES += JackAudioInterface.h
@@ -113,8 +123,7 @@ SOURCES += DataProtocol.cpp \
            #tests.cpp \
            UdpDataProtocol.cpp \
            UdpMasterListener.cpp \
-           AudioInterface.cpp \
-           RtAudioInterface.cpp
+           AudioInterface.cpp
 !nojack {
 SOURCES += JackAudioInterface.cpp
 }
@@ -127,21 +136,7 @@ win32 {
 macx | win32 {
 INCLUDEPATH += ../externals/rtaudio-4.1.1/
 DEPENDPATH += ../externals/rtaudio-4.1.1/
-HEADERS += ../externals/rtaudio-4.1.1/RtAudio.h
-SOURCES += ../externals/rtaudio-4.1.1/RtAudio.cpp
+HEADERS +=
+SOURCES +=
 }
 
-win32 {
-HEADERS += asio.h \
-           asiodrivers.h \
-           asiolist.h \
-           asiodrvr.h \
-           asiosys.h \
-           ginclude.h \
-           iasiodrv.h \
-           iasiothiscallresolver.h
-SOURCES += asio.cpp \
-           asiodrivers.cpp \
-           asiolist.cpp \
-           iasiothiscallresolver.cpp
-}
